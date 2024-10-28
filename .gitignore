@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+stitch/data/
+*.jpg
+
 # Distribution / packaging
 .Python
 build/
