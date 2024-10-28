@@ -4,20 +4,18 @@ import numpy as np
 
 
 
-with open("/datadrive/codes/retail/ultralytics/stitch/data/result_21.json", "r") as read_file:  
+with open("/datadrive/codes/retail/ultralytics/stitch/output/jsons/30.json", "r") as read_file:  
     data21 = json.load(read_file)
-    data21 = json.loads(data21)  
 
 
-with open("/datadrive/codes/retail/ultralytics/stitch/data/result_0.json", "r") as read_file:  
+with open("/datadrive/codes/retail/ultralytics/stitch/output/jsons/15.json", "r") as read_file:  
     data0 = json.load(read_file)
-    data0 = json.loads(data0)
 
 
 src_points = []
 dst_points = []
 for d in data21:
-    if d['track_id'] in [1, 2, 4, 5, 7]:
+    if d['track_id'] in [1, 2, 4, 5, 6, 7]:
         x1, y1 = d['box']['x1'], d['box']['y1']
         x2, y2 = d['box']['x2'], d['box']['y2']
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
@@ -25,10 +23,11 @@ for d in data21:
         src_points.append(cv2.KeyPoint(x1, y1, 1))
         src_points.append(cv2.KeyPoint(x2, y2, 1))
         
-print("src_points", src_points)
+print("shape", len(src_points))
+print("src_points", [p.pt for p in src_points])
 
 for d in data0:
-    if d['track_id'] in [1, 2, 4, 5, 7]:
+    if d['track_id'] in [1, 2, 4, 5, 6, 7]:
         x1, y1 = d['box']['x1'], d['box']['y1']
         x2, y2 = d['box']['x2'], d['box']['y2']
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
@@ -36,7 +35,8 @@ for d in data0:
         dst_points.append(cv2.KeyPoint(x1, y1, 1))
         dst_points.append(cv2.KeyPoint(x2, y2, 1))
         
-print("dst_points", dst_points)
+print("shape", len(dst_points))
+print("dst_points", [p.pt for p in dst_points])
 
 
 # Find homography  
@@ -46,8 +46,8 @@ M, mask = cv2.findHomography(src_points, dst_points, cv2.RANSAC)
 print("M", M)
   
   
-img0_path = "/datadrive/codes/frank/ultralytics/run/output_0.jpg"
-img1_path = "/datadrive/codes/frank/ultralytics/run/output_21.jpg"
+img0_path = "/datadrive/codes/retail/ultralytics/stitch/output/imgs/15.jpg"
+img1_path = "/datadrive/codes/retail/ultralytics/stitch/output/imgs/30.jpg"
 # Use this homography  
 #stitching  
 img0 = cv2.imread(img0_path)  
