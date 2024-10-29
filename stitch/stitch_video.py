@@ -276,8 +276,8 @@ def get_tracking_results():
     yolo11x = "/datadrive/codes/frank/ultralytics/run/runs/detect/train2/weights/best.pt"
     model = YOLO(yolo11x)
 
-    results = model.track(source="/datadrive/codes/frank/ultralytics/data/Video/3.mp4", 
-                        save=False,
+    results = model.track(source="/datadrive/codes/frank/ultralytics/data/Video/4.mov", 
+                        save=True,
                         tracker="/datadrive/codes/frank/ultralytics/ultralytics/cfg/trackers/bytetrack.yaml")
 
     # save the detected images and tracking results
@@ -375,7 +375,7 @@ def do_stitch(imgs:np.ndarray, Hs:np.ndarray):
 def stitch_video():
     frm_cnt = len(glob.glob("/datadrive/codes/retail/ultralytics/stitch/output/imgs/*.jpg"))
     conf_thresh = 0.6
-    boun_thresh = 0.05
+    boun_thresh = 0.001
     img_folder = "/datadrive/codes/retail/ultralytics/stitch/output/imgs"
     json_folder = "/datadrive/codes/retail/ultralytics/stitch/output/jsons"
     
@@ -463,6 +463,6 @@ def stitch_video():
     cv2.imwrite("pano.jpg", pano)
 
 if __name__ == "__main__":
-    # get_tracking_results()
+    get_tracking_results()
     
     stitch_video()
