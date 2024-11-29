@@ -7,7 +7,7 @@ import cv2
 yolo11x = "/datadrive/codes/frank/ultralytics/run/runs/detect/train2/weights/best.pt"
 model = YOLO(yolo11x)
 
-results = model.track(source="/datadrive/codes/frank/ultralytics/data/Video/2.mp4", 
+results = model.track(source="/datadrive/codes/retail/ultralytics/stitch/data/103101.mp4", 
                       save=True,
                       tracker="/datadrive/codes/frank/ultralytics/ultralytics/cfg/trackers/bytetrack.yaml")
 
@@ -42,5 +42,5 @@ for i, result in enumerate(results):
     
 
 
-img0 = results[0].data.numpy()
-print(img0.shape)
+# img0 = results[0].data.numpy()
+# print(img0.shape)

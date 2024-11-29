@@ -276,7 +276,7 @@ def get_tracking_results():
     yolo11x = "/datadrive/codes/frank/ultralytics/run/runs/detect/train2/weights/best.pt"
     model = YOLO(yolo11x)
 
-    results = model.track(source="/datadrive/codes/frank/ultralytics/data/Video/4.mov", 
+    results = model.track(source="/datadrive/codes/retail/ultralytics/stitch/data/demo1.MOV", 
                         save=True,
                         tracker="/datadrive/codes/frank/ultralytics/ultralytics/cfg/trackers/bytetrack.yaml")
 
@@ -372,6 +372,21 @@ def do_stitch(imgs:np.ndarray, Hs:np.ndarray):
     return pano
 
 
+def cv_stitch(imgs:np.ndarray):
+    # Create a Stitcher class object  
+    stitcher = cv2.Stitcher.create()  
+    
+    # Pass the images to the stitch method  
+    status, panorama = stitcher.stitch(imgs)  
+    
+    if status == cv2.Stitcher_OK:  
+        # Save the resulting image  
+        cv2.imwrite('result.jpg', panorama)  
+    else:  
+        print('Error during stitching, error code: ', status)  
+    return panorama
+
+
 def stitch_video():
     frm_cnt = len(glob.glob("/datadrive/codes/retail/ultralytics/stitch/output/imgs/*.jpg"))
     conf_thresh = 0.6
@@ -465,4 +480,10 @@ def stitch_video():
 if __name__ == "__main__":
     get_tracking_results()
     
-    stitch_video()
+    # stitch_video()
+    
+    # imgs = [cv2.imread(f) for f in glob.glob("/datadrive/codes/retail/ultralytics/stitch/output_near/imgs/*.jpg")]
+    # pano = cv_stitch(imgs)
+    # print("pano", pano.shape)
+    # cv2.imwrite("pano_cv.jpg", pano)
+    
