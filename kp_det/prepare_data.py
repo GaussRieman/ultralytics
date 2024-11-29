@@ -174,11 +174,13 @@ def process_csv_data(csv_file:str, save_folder:str):
 
 
 def visualize_data(data_folder:str):
+    visualize_folder = os.path.join(data_folder, "visualize")
+    os.makedirs(visualize_folder, True)
     stage = ["train", "val"]
-    train_img_folder = os.path.join(data_folder, "images", "train")
-    val_img_folder = os.path.join(data_folder, "images", "val")
-    train_label_folder = os.path.join(data_folder, "labels", "train")
-    val_label_folder = os.path.join(data_folder, "labels", "val")
+    train_img_folder = os.path.join(visualize_folder, "images", "train")
+    val_img_folder = os.path.join(visualize_folder, "images", "val")
+    train_label_folder = os.path.join(visualize_folder, "labels", "train")
+    val_label_folder = os.path.join(visualize_folder, "labels", "val")
     
     img_folder = None
     label_folder = None
