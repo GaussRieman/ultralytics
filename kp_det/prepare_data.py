@@ -16,7 +16,7 @@ import tqdm
 
 
 PROFILE_LABEL = "1056817"
-COLUMN_LABEL = "4433221"
+COLUMN_LABEL = "4434375"
 
 
 @retrying.retry(wait_fixed=2000, stop_max_attempt_number=3)
@@ -141,9 +141,12 @@ def process_dataframe(df:pd.DataFrame, save_folder:str):
                 with open(label_path, "w") as f:
                     f.write("0")
                     for x in bbox:
+                        x = min(1, max(0, x))
                         f.write(f" {x}")
                     for pt in corners:
-                        f.write(f" {pt[0]} {pt[1]}")
+                        pt0 = min(1, max(0, pt[0]))
+                        pt1 = min(1, max(0, pt[1]))
+                        f.write(f" {pt0} {pt1}")
                 count += 1
             except Exception as e:
                 print(f"Error:{e}")
@@ -175,12 +178,12 @@ def process_csv_data(csv_file:str, save_folder:str):
 
 def visualize_data(data_folder:str):
     visualize_folder = os.path.join(data_folder, "visualize")
-    os.makedirs(visualize_folder, True)
+    os.makedirs(visualize_folder, exist_ok=True)
     stage = ["train", "val"]
-    train_img_folder = os.path.join(visualize_folder, "images", "train")
-    val_img_folder = os.path.join(visualize_folder, "images", "val")
-    train_label_folder = os.path.join(visualize_folder, "labels", "train")
-    val_label_folder = os.path.join(visualize_folder, "labels", "val")
+    train_img_folder = os.path.join(data_folder, "images", "train")
+    val_img_folder = os.path.join(data_folder, "images", "val")
+    train_label_folder = os.path.join(data_folder, "labels", "train")
+    val_label_folder = os.path.join(data_folder, "labels", "val")
     
     img_folder = None
     label_folder = None
@@ -194,41 +197,45 @@ def visualize_data(data_folder:str):
         
         img_files = os.listdir(img_folder)
         for img_file in img_files:
-            print(f"Processing {img_file}")
-            img_path = os.path.join(img_folder, img_file)
-            label_path = os.path.join(label_folder, img_file.replace(".jpg", ".txt"))
-            with open(label_path, "r") as f:
-                line = f.readline()
-                line = line.strip().split(" ")
-                # print(f"line:{line}")
-                line = [eval(x) for x in line]
-                bbox = line[1:5]
-                corners = line[5:]
-                img = cv2.imread(img_path)
-                h,w,_ = img.shape
-                center_x, center_y, box_width, box_height = bbox
-                x0 = center_x - box_width/2
-                y0 = center_y - box_height/2
-                x1 = center_x + box_width/2
-                y1 = center_y + box_height/2
-                x0, x1 = int(x0*w), int(x1*w)
-                y0, y1 = int(y0*h), int(y1*h)
-                for i in range(4):
-                    corners[i*2] = int(corners[i*2] * w)
-                    corners[i*2+1] = int(corners[i*2+1] * h)
-                print("corners:", corners)
-                img = cv2.rectangle(img, (x0, y0), (x1, y1), (0, 255, 0), 2)
-                for i in range(4):
-                    img = cv2.circle(img, (corners[i*2], corners[i*2+1]), 5, (0, 0, 255), -1)
-                cv2.imwrite(f"/datadrive/codes/retail/ultralytics/datasets/abi-stacking-pose/{st}_{img_file}", img)
+            try:
+                print(f"Processing {img_file}")
+                img_path = os.path.join(img_folder, img_file)
+                label_path = os.path.join(label_folder, img_file.replace(".jpg", ".txt"))
+                with open(label_path, "r") as f:
+                    line = f.readline()
+                    line = line.strip().split(" ")
+                    # print(f"line:{line}")
+                    line = [eval(x) for x in line]
+                    bbox = line[1:5]
+                    corners = line[5:]
+                    img = cv2.imread(img_path)
+                    h,w,_ = img.shape
+                    center_x, center_y, box_width, box_height = bbox
+                    x0 = center_x - box_width/2
+                    y0 = center_y - box_height/2
+                    x1 = center_x + box_width/2
+                    y1 = center_y + box_height/2
+                    x0, x1 = int(x0*w), int(x1*w)
+                    y0, y1 = int(y0*h), int(y1*h)
+                    for i in range(4):
+                        corners[i*2] = int(corners[i*2] * w)
+                        corners[i*2+1] = int(corners[i*2+1] * h)
+                    print("corners:", corners)
+                    img = cv2.rectangle(img, (x0, y0), (x1, y1), (0, 255, 0), 2)
+                    for i in range(4):
+                        img = cv2.circle(img, (corners[i*2], corners[i*2+1]), 5, (0, 0, 255), -1)
+                    cv2.imwrite(f"{visualize_folder}/{st}_{img_file}", img)
+            except Exception as e:
+                print(f"Error:{e}")
+                continue
         
 
 if __name__ == "__main__":
-    test_download_image()
-    print("test_download_image passed")
+    # test_download_image()
+    # print("test_download_image passed")
     
-    csv_file = "/datadrive/codes/retail/ultralytics/datasets/abi-stacking-pose/114384_f67158a8-53a2-447e-b94a-d93de9476bed_result.csv"
-    save_folder = "/datadrive/codes/retail/ultralytics/datasets/abi-stacking-pose"
+    csv_file = "/datadrive/codes/retail/ultralytics/datasets/abi-stitching-1303/abi1203.csv"
+    save_folder = "/datadrive/codes/retail/ultralytics/datasets/abi-stitching-1303"
     process_csv_data(csv_file, save_folder)
     
     visualize_data(save_folder)
